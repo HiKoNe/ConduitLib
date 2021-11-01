@@ -1,0 +1,3 @@
+displayName = Conduit Lib
+author = HiKoNe
+version = 0.1
