@@ -1,5 +1,4 @@
 ﻿using ConduitLib.Test;
-using System.Diagnostics;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
@@ -14,10 +13,14 @@ namespace ConduitLib
     {
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
+            base.KillTile(i, j, type, ref fail, ref effectOnly, ref noItem);
+
+            if (Main.netMode == 1)
+                return;
+
             //Fix Vanilla Food Platter
             if (type == TileID.FoodPlatter && !fail)
             {
-                ConduitLib.Debug(new StackTrace());
                 foreach (var item in TileEntity.ByID.Where(te => te.Value is TEFoodPlatter && te.Value.Position.X == i && te.Value.Position.Y == j))
                     TileEntity.ByID.Remove(item.Key);
                 foreach (var item in TileEntity.ByPosition.Where(te => te.Value is TEFoodPlatter && te.Value.Position.X == i && te.Value.Position.Y == j))
@@ -27,11 +30,22 @@ namespace ConduitLib
             if (ConduitWorld.Conduits[i, j] is not null)
                 foreach (var conduit in ConduitWorld.Conduits[i, j])
                     ConduitWorld.ConduitsToCheck.Add(conduit);
-
-            base.KillTile(i, j, type, ref fail, ref effectOnly, ref noItem);
         }
 
         public override void PlaceInWorld(int i, int j, int type, Item item)
+        {
+            base.PlaceInWorld(i, j, type, item);
+
+            if (Main.netMode == 1)
+            {
+                ConduitNet.SendPacket(PacketID.PlaceInWorld, -1, i, j, type);
+                return;
+            }
+
+            PlaceInWorld(i, j, type);
+        }
+
+        public static void PlaceInWorld(int i, int j, int type)
         {
             int style = 0;
             int alternate = 0;
@@ -47,17 +61,19 @@ namespace ConduitLib
                     if (ConduitWorld.Conduits[x, y] is not null)
                         foreach (var conduit in ConduitWorld.Conduits[x, y])
                             ConduitWorld.ConduitsToCheck.Add(conduit);
-
-            base.PlaceInWorld(i, j, type, item);
         }
 
         public override bool PreHitWire(int i, int j, int type)
         {
+            bool flag = base.PreHitWire(i, j, type);
+            if (Main.netMode == 1)
+                return flag;
+
             if (ConduitUtil.TryGetConduit<ItemConduit>(i, j, out var conduit)
                 && conduit.WireMode && conduit.IsConnector && conduit.Output)
                 conduit.OnUpdate();
 
-            return base.PreHitWire(i, j, type);
+            return flag;
         }
     }
 }

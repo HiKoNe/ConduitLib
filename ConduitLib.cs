@@ -1,4 +1,4 @@
-using ConduitLib.APIs;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -23,6 +23,12 @@ namespace ConduitLib
             ConduitLoader.Unload();
             ConduitAsset.Unload();
             On.Terraria.Main.DoDraw_WallsAndBlacks -= this.Main_DoDraw_WallsAndBlacks;
+        }
+
+        public override void HandlePacket(BinaryReader reader, int whoAmI)
+        {
+            base.HandlePacket(reader, whoAmI);
+            ConduitNet.HandlePacket(reader, whoAmI);
         }
 
         void Main_DoDraw_WallsAndBlacks(On.Terraria.Main.orig_DoDraw_WallsAndBlacks orig, Main self)

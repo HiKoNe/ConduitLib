@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 
 namespace ConduitLib
 {
@@ -13,13 +14,12 @@ namespace ConduitLib
         /// <summary> Left, Up, Right, Down </summary>
         public static Point16[] Dirs => new Point16[4] { new Point16(-1, 0), new Point16(0, -1), new Point16(1, 0), new Point16(0, 1) };
 
-        public static bool PlaceConduit(ModConduit conduit)
-        {
-            return PlaceConduit(conduit.Position.X, conduit.Position.Y, conduit.GetType(), out _);
-        }
-
         public static bool PlaceConduit(int i, int j, Type conduitType, out ModConduit conduit)
         {
+            conduit = default;
+            if (Main.netMode == 1)
+                return ConduitNet.SendPacket(PacketID.PlaceConduit, -1, i, j, conduitType);
+
             ref var list = ref ConduitWorld.Conduits[i, j];
             if (list is null)
                 list = new();
@@ -41,19 +41,25 @@ namespace ConduitLib
                 conduit.IsConnector = conduit.ValidForConnector();
                 UpdateNetwork(i, j, conduitType);
                 conduit.OnPlace();
+                ConduitNet.SendPacket(PacketID.SyncConduit, -1, i, j, conduitType, true);
                 return true;
             }
-            conduit = default;
             return false;
         }
 
-        public static bool RemoveConduit(int i, int j, Type conduitType)
+        public static void RemoveConduit(int i, int j, Type conduitType)
         {
+            if (Main.netMode == 1)
+            {
+                ConduitNet.SendPacket(PacketID.RemoveConduit, -1, i, j, conduitType);
+                return;
+            }
+
             ref var list = ref ConduitWorld.Conduits[i, j];
             if (list is null)
-                return false;
+                return;
 
-            int removeCount = list.RemoveAll(c =>
+            bool isRemove = list.RemoveAll(c =>
             {
                 if (c.GetType() == conduitType)
                 {
@@ -62,15 +68,13 @@ namespace ConduitLib
                     return true;
                 }
                 return false;
-            });
+            }) > 0;
 
-            if (removeCount > 0)
+            if (isRemove)
             {
                 UpdateNetworkNearby(i, j, conduitType);
-                return true;
+                ConduitNet.SendPacket(PacketID.SyncConduit, -1, i, j, conduitType, false);
             }
-
-            return false;
         }
 
         public static bool ContaisConduit(int i, int j, Type conduitType)
@@ -79,7 +83,7 @@ namespace ConduitLib
             return list is not null && list.Any(c => c.GetType() == conduitType);
         }
 
-        public static bool ContaisConduit(int i, int j)
+        public static bool ContaisAnyConduit(int i, int j)
         {
             ref var list = ref ConduitWorld.Conduits[i, j];
             return list is not null && list.Count > 0;
@@ -98,21 +102,21 @@ namespace ConduitLib
             return conduit is not null;
         }
 
-        public static bool TryGetConduit(int i, int j, out List<ModConduit> conduit)
+        public static bool TryGetConduits(int i, int j, out List<ModConduit> conduit)
         {
             conduit = ConduitWorld.Conduits[i, j];
             return conduit is not null && conduit.Count > 0;
         }
 
-        public static void UpdateNetworkNearby(int i, int j)
+        public static void UpdateAllNetworkNearby(int i, int j)
         {
             foreach (var dir in Dirs)
-                UpdateNetwork(dir.X + i, dir.Y + j);
+                UpdateAllNetwork(dir.X + i, dir.Y + j);
         }
 
-        public static void UpdateNetwork(int i, int j)
+        public static void UpdateAllNetwork(int i, int j)
         {
-            if (TryGetConduit(i, j, out var conduits))
+            if (TryGetConduits(i, j, out var conduits))
                 foreach (var conduit in conduits)
                     UpdateNetwork(i, j, conduit.GetType());
         }
@@ -125,6 +129,9 @@ namespace ConduitLib
 
         public static void UpdateNetwork(int i, int j, Type conduitType)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             if (!ContaisConduit(i, j, conduitType))
                 return;
 
@@ -154,25 +161,36 @@ namespace ConduitLib
             }
         }
 
-
-
         public static bool HasConnection(ModConduit conduit, int side)
         {
             var pos = conduit.Position + Dirs[side];
             return TryGetConduit(pos.X, pos.Y, conduit.GetType(), out var conduit2) && conduit.Direction[side] && conduit2.Direction[(side + 2) % 4];
         }
 
-        public static void SetConnection(ModConduit conduit, int side, bool value)
+        public static void SetConnection(int i, int j, Type conduitType, int side, bool value)
         {
-            var pos = conduit.Position + Dirs[side];
-            if (TryGetConduit(pos.X, pos.Y, conduit.GetType(), out var conduit2))
-                conduit.Direction[side] = conduit2.Direction[(side + 2) % 4] = value;
-            UpdateNetwork(conduit.Position.X, conduit.Position.Y);
-            UpdateNetwork(pos.X, pos.Y);
+            if (Main.netMode == 1)
+            {
+                ConduitNet.SendPacket(PacketID.SetConnection, -1, i, j, conduitType, side, value);
+                return;
+            }
+
+            if (TryGetConduit(i, j, conduitType, out var conduit))
+            {
+                var pos = conduit.Position + Dirs[side];
+                if (TryGetConduit(pos.X, pos.Y, conduit.GetType(), out var conduit2))
+                    conduit.Direction[side] = conduit2.Direction[(side + 2) % 4] = value;
+                UpdateNetwork(conduit.Position.X, conduit.Position.Y, conduitType);
+                UpdateNetwork(pos.X, pos.Y, conduitType);
+                ConduitNet.SendPacket(PacketID.SyncConduit, -1, i, j, conduitType, false);
+            }
         }
 
         public static void DrawConduit(ModConduit conduit, SpriteBatch spriteBatch, float? alpha)
         {
+            if (Main.netMode == 2)
+                return;
+
             int frameX = 0;
             int frameY = 0;
 
@@ -187,7 +205,5 @@ namespace ConduitLib
 
             conduit.OnDraw(spriteBatch, ref frameX, ref frameY, ref alpha);
         }
-
-        
     }
 }

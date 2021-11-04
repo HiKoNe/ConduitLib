@@ -46,6 +46,7 @@ namespace ConduitLib.Test.APIs.Vanilla
                         Items[slot] = value.Clone();
                     else
                         Dyes[slot - 2] = value.Clone();
+                    NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, hatRack.ID);
                 }
             }
         }

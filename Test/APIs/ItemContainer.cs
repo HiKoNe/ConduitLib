@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -27,7 +28,10 @@ namespace ConduitLib.Test.APIs
             set
             {
                 if (this.SlotExist(slot))
+                {
                     container[slot] = value.Clone();
+                    NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, ID);
+                }
             }
         }
 

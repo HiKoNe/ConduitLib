@@ -19,12 +19,14 @@ namespace ConduitLib.Test
     public class ItemConduit : ModConduit
     {
         protected int cururrentRoundRobin;
-        private int priority;
+        protected int priority;
+        protected bool roundRobin;
+        protected bool wireMode = true;
 
         public IItemContainer ItemContainer { get; set; }
-        public bool RoundRobin { get; set; }
-        public int Priority { get => priority; set { priority = value; UpdateNetwork(); } }
-        public bool WireMode { get; set; } = true;
+        public bool RoundRobin { get => roundRobin; set { roundRobin = value; UpdateConduit(); } }
+        public int Priority { get => priority; set { priority = value; UpdateConduit(); } }
+        public bool WireMode { get => wireMode; set { wireMode = value; UpdateConduit(); } }
         public int MaxTransfer => 4;
         public override List<ModConduit> Network
         {
@@ -153,18 +155,18 @@ namespace ConduitLib.Test
 
         public override void SaveData(TagCompound tag)
         {
+            tag["roundRobin"] = roundRobin;
+            tag["priority"] = priority;
+            tag["wireMode"] = wireMode;
             base.SaveData(tag);
-            tag["roundRobin"] = RoundRobin;
-            tag["priority"] = Priority;
-            tag["wireMode"] = WireMode;
         }
 
-        public override void LoadData(TagCompound tag)
+        public override void LoadData(TagCompound tag, bool needUpdate)
         {
-            base.LoadData(tag);
-            RoundRobin = tag.GetBool("roundRobin");
-            Priority = tag.GetInt("priority");
-            WireMode = tag.GetBool("wireMode");
+            roundRobin = tag.GetBool("roundRobin");
+            priority = tag.GetInt("priority");
+            wireMode = tag.GetBool("wireMode");
+            base.LoadData(tag, needUpdate);
         }
     }
 }

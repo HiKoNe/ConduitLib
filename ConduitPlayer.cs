@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace ConduitLib
@@ -18,6 +19,13 @@ namespace ConduitLib
             base.LoadData(tag);
             if (tag.ContainsKey(TAG_WRENCH_MODE))
                 ConduitWrench.Mode = (ConduitWrench.EWrenchMode)tag.GetByte(TAG_WRENCH_MODE);
+        }
+
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
+            if (Main.netMode == 2)
+                ConduitNet.SendPacket(PacketID.SendWorld, fromWho);
+            base.SyncPlayer(toWho, fromWho, newPlayer);
         }
     }
 }

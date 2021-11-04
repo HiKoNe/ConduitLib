@@ -11,6 +11,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using Terraria.UI.Chat;
+using Terraria.ID;
 
 namespace ConduitLib.UIs
 {
@@ -141,6 +142,9 @@ namespace ConduitLib.UIs
 
         public static void Open(int i, int j, params Type[] conduitTypes)
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             var list = new List<ModConduit>();
             foreach (var conduitType in conduitTypes)
                 if (ConduitUtil.TryGetConduit(i, j, conduitType, out var conduit) && conduit.IsConnector)
@@ -152,6 +156,9 @@ namespace ConduitLib.UIs
 
         public static void Close()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             ConduitUI.UI.SetState(null);
         }
     }

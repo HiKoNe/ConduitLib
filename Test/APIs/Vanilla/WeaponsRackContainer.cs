@@ -25,7 +25,10 @@ namespace ConduitLib.Test.APIs.Vanilla
             set
             {
                 if (this.SlotExist(slot))
+                {
                     weaponsRack.item = value.Clone();
+                    NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, weaponsRack.ID);
+                }
             }
         }
 

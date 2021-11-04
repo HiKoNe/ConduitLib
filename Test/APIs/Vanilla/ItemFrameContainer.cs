@@ -38,7 +38,10 @@ namespace ConduitLib.Test.APIs.Vanilla
             set
             {
                 if (this.SlotExist(slot))
+                {
                     itemFrame.item = value.Clone();
+                    NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, itemFrame.ID);
+                }
             }
         }
     }

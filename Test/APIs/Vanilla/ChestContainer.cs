@@ -74,7 +74,10 @@ namespace ConduitLib.Test.APIs.Vanilla
             set
             {
                 if (this.SlotExist(slot) && Main.chest[id] != null)
+                {
                     Main.chest[id].item[slot] = value.Clone();
+                    NetMessage.SendData(MessageID.SyncChestItem, -1, -1, null, id, slot);
+                }
             }
         }
     }

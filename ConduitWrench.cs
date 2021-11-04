@@ -91,7 +91,7 @@ namespace ConduitLib
                                 side = 3;
                         }
 
-                        ConduitUtil.SetConnection(conduit, side, !conduit.Direction[side]);
+                        ConduitUtil.SetConnection(i, j, conduitType, side, !conduit.Direction[side]);
                     }
                 }
                 else

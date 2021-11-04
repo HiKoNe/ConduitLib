@@ -24,7 +24,10 @@ namespace ConduitLib.Test.APIs.Vanilla
             set
             {
                 if (this.SlotExist(slot))
+                {
                     foodPlatter.item = value.Clone();
+                    NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, foodPlatter.ID);
+                }
             }
         }
 

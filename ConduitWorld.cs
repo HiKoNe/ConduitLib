@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -31,6 +32,26 @@ namespace ConduitLib
             Conduits = new List<ModConduit>[Main.maxTilesX, Main.maxTilesY];
             ConduitsToCheck.Clear();
             ConduitsToUpdate.Clear();
+        }
+        public override void PostUpdateWorld()
+        {
+            foreach (var conduit in ConduitsToCheck)
+                conduit.IsConnector = conduit.ValidForConnector();
+            ConduitsToCheck.Clear();
+
+            foreach (var conduit in ConduitsToUpdate)
+                if (conduit.IsConnector)
+                    if (conduit.UpdateDelay.HasValue && ++conduit.updateDelay >= conduit.UpdateDelay)
+                    {
+                        conduit.OnUpdate();
+                        conduit.updateDelay = 0;
+                    }
+        }
+        public override void PostDrawTiles()
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            DrawConduits(true);
+            Main.spriteBatch.End();
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -63,9 +84,10 @@ namespace ConduitLib
                 tag[modConduit.FullName] = modConduitTag;
             }
         }
-
         public override void LoadWorldData(TagCompound tag)
         {
+            OnWorldLoad();
+
             foreach (var modConduit in ConduitLoader.Conduits)
             {
                 if (!tag.ContainsKey(modConduit.FullName))
@@ -87,28 +109,6 @@ namespace ConduitLib
                     }
                 }
             }
-        }
-
-        public override void PostUpdateWorld()
-        {
-            foreach (var conduit in ConduitsToCheck)
-                conduit.IsConnector = conduit.ValidForConnector();
-            ConduitsToCheck.Clear();
-
-            foreach (var conduit in ConduitsToUpdate)
-                if (conduit.IsConnector)
-                    if (conduit.UpdateDelay.HasValue && ++conduit.updateDelay >= conduit.UpdateDelay)
-                    {
-                        conduit.OnUpdate();
-                        conduit.updateDelay = 0;
-                    }
-        }
-
-        public override void PostDrawTiles()
-        {
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            DrawConduits(true);
-            Main.spriteBatch.End();
         }
 
         internal static void DrawConduits(bool postDraw = false)
