@@ -1,6 +1,7 @@
 displayName = Conduit Lib
 author = HiKoNe
 version = 0.1
+homepage = https://forums.terraria.org/index.php?threads/hikones-mods.109167/#:~:text=%3E-,Conduit%20Lib,-%3A%20%E2%80%8B
 hideCode = false
 hideResources = false
 includeSource = true
