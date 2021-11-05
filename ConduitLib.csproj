@@ -13,4 +13,9 @@
   <ItemGroup>
     <Folder Include="Assets\" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ItemContainerLib">
+      <HintPath>..\Mod Libraries\ItemContainerLib_v0.1.0.1.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

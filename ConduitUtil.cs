@@ -1,4 +1,5 @@
 ﻿using ConduitLib.APIs;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -203,7 +204,15 @@ namespace ConduitLib
             if (HasConnection(conduit, 3)) //Down
                 frameY += 36;
 
-            conduit.OnDraw(spriteBatch, ref frameX, ref frameY, ref alpha);
+            bool flag = conduit.OnDraw(spriteBatch, ref frameX, ref frameY, ref alpha);
+            if (flag)
+            {
+                spriteBatch.Draw(conduit.Texture.Value,
+                    conduit.Position.ToVector2() * 16 - Main.screenPosition,
+                    new Rectangle(frameX, frameY, 16, 16),
+                    alpha.HasValue ? Color.White * alpha.Value : Lighting.GetColor(conduit.Position.X, conduit.Position.Y),
+                    0f, Vector2.Zero, 1f, 0f, 0f);
+            }
         }
     }
 }

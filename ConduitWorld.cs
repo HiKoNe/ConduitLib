@@ -70,7 +70,7 @@ namespace ConduitLib
                         dict.TryAdd(conduitType, new List<TagCompound>());
 
                         var conduitTag = new TagCompound();
-                        conduit.SaveData(conduitTag);
+                        conduit.InternalSaveData(conduitTag);
                         dict[conduitType].Add(conduitTag);
                     }
                 }
@@ -99,7 +99,7 @@ namespace ConduitLib
                     foreach (var conduitTag in modConduitTag.GetList<TagCompound>(TAG_CONDUITS))
                     {
                         var conduit = (ModConduit)Activator.CreateInstance(modConduit.GetType());
-                        conduit.LoadData(conduitTag);
+                        conduit.InternalLoadData(conduitTag);
 
                         ref var list = ref Conduits[conduit.Position.X, conduit.Position.Y];
                         if (list is null)

@@ -10,9 +10,6 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using Terraria.ID;
-using Terraria.Chat;
-using Terraria.Localization;
-using System.Diagnostics;
 
 namespace ConduitLib.APIs
 {
@@ -36,7 +33,7 @@ namespace ConduitLib.APIs
         protected bool output = true;
         protected bool isConnector;
         protected private Point16 position;
-        private bool[] direction;
+        protected bool[] direction;
 
         public virtual List<ModConduit> Network
         {
@@ -54,15 +51,6 @@ namespace ConduitLib.APIs
                 network = list;
             }
         }
-        public Point16 Position { get => position; set => position = value; }
-        public bool[] Direction { get => direction; set => direction = value; } //Left, Up, Right, Down
-        public bool Input { get => input; set { input = value; UpdateConduit(); } }
-        public bool Output { get => output; set { output = value; UpdateConduit(); } }
-        public virtual int? UpdateDelay { get; }
-        public abstract Asset<Texture2D> Texture { get; }
-        public abstract Asset<Texture2D> WrenchIcon { get; }
-        public abstract bool ValidForConnector();
-
         public bool IsConnector
         {
             get => isConnector;
@@ -90,6 +78,13 @@ namespace ConduitLib.APIs
                 UpdateConduit();
             }
         }
+        public Point16 Position { get => position; set => position = value; }
+        public bool[] Direction { get => direction; set => direction = value; } //Left, Up, Right, Down
+        public bool Input { get => input; set { input = value; UpdateConduit(); } }
+        public bool Output { get => output; set { output = value; UpdateConduit(); } }
+        public virtual int? UpdateDelay { get; }
+        public abstract Asset<Texture2D> Texture { get; }
+        public abstract Asset<Texture2D> WrenchIcon { get; }
 
         public void UpdateConduit()
         {
@@ -98,19 +93,16 @@ namespace ConduitLib.APIs
             ConduitNet.SendPacket(PacketID.SyncConduit, -1, Position.X, Position.Y, GetType(), false);
         }
 
+        public abstract bool ValidForConnector();
         public virtual void OnPlace() { }
         public virtual void OnRemove() { }
         public virtual void OnUpdate() { }
         public virtual void OnInitializeUI(ref UIPanel panel, StyleDimension rightDim, StyleDimension topDim) { }
-        public virtual void OnDraw(in SpriteBatch spriteBatch, ref int frameX, ref int frameY, ref float? alpha)
-        {
-            spriteBatch.Draw(Texture.Value,
-                Position.ToVector2() * 16 - Main.screenPosition,
-                new Rectangle(frameX, frameY, 16, 16),
-                alpha.HasValue ? Color.White * alpha.Value : Lighting.GetColor(Position.X, Position.Y),
-                0f, Vector2.Zero, 1f, 0f, 0f);
-        }
-        public virtual void SaveData(TagCompound tag)
+        public virtual bool OnDraw(in SpriteBatch spriteBatch, ref int frameX, ref int frameY, ref float? alpha) => true;
+        public virtual void SaveData(TagCompound tag) { }
+        public virtual void LoadData(TagCompound tag) { }
+
+        public virtual void InternalSaveData(TagCompound tag)
         {
             tag["x"] = position.X;
             tag["y"] = position.Y;
@@ -121,14 +113,16 @@ namespace ConduitLib.APIs
             tag["input"] = input;
             tag["output"] = output;
             tag["connector"] = isConnector;
+            SaveData(tag);
         }
-        public virtual void LoadData(TagCompound tag, bool needUpdate = true)
+        public virtual void InternalLoadData(TagCompound tag, bool needUpdate = true)
         {
             position = new Point16(tag.GetShort("x"), tag.GetShort("y"));
             direction = new bool[] { tag.GetBool("dir0"), tag.GetBool("dir1"), tag.GetBool("dir2"), tag.GetBool("dir3") };
             input = tag.GetBool("input");
             output = tag.GetBool("output");
             isConnector = tag.GetBool("connector");
+            LoadData(tag);
             if (needUpdate)
                 IsConnector = isConnector;
         }

@@ -55,7 +55,7 @@ namespace ConduitLib
                         if (flag)
                             conduit = (ModConduit)Activator.CreateInstance(conduitType);
 
-                        conduit.LoadData(tag, false);
+                        conduit.InternalLoadData(tag, false);
 
                         if (flag)
                             list.Add(conduit);
@@ -126,7 +126,7 @@ namespace ConduitLib
                     {
                         packet.Write(true);
                         tag = new TagCompound();
-                        conduit.SaveData(tag);
+                        conduit.InternalSaveData(tag);
                         packet.Write(tag);
                     }
                     else

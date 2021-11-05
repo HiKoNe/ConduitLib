@@ -1,5 +1,4 @@
-﻿using ConduitLib.Test;
-using System.Linq;
+﻿using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
@@ -63,17 +62,17 @@ namespace ConduitLib
                             ConduitWorld.ConduitsToCheck.Add(conduit);
         }
 
-        public override bool PreHitWire(int i, int j, int type)
-        {
-            bool flag = base.PreHitWire(i, j, type);
-            if (Main.netMode == 1)
-                return flag;
+        //public override bool PreHitWire(int i, int j, int type)
+        //{
+        //    bool flag = base.PreHitWire(i, j, type);
+        //    if (Main.netMode == 1)
+        //        return flag;
 
-            if (ConduitUtil.TryGetConduit<ItemConduit>(i, j, out var conduit)
-                && conduit.WireMode && conduit.IsConnector && conduit.Output)
-                conduit.OnUpdate();
+        //    if (ConduitUtil.TryGetConduit<ItemConduit>(i, j, out var conduit)
+        //        && conduit.WireMode && conduit.IsConnector && conduit.Output)
+        //        conduit.OnUpdate();
 
-            return flag;
-        }
+        //    return flag;
+        //}
     }
 }
