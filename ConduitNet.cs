@@ -81,7 +81,7 @@ namespace ConduitLib
                     }
                     break;
                 case PacketID.PlaceInWorld:
-                    ConduitGlobal.PlaceInWorld(i, j, reader.ReadInt32());
+                    GlobalTiles.PlaceInWorld(i, j, reader.ReadInt32());
                     break;
             }
         }

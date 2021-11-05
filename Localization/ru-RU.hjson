@@ -1,0 +1,25 @@
+Mods:
+{
+	ConduitLib:
+	{
+		ItemName:
+		{
+			ConduitShell: Оболочка трубы
+			ConduitWrench: Трубный ключ
+		}
+		ItemTooltip:
+		{
+			ConduitShell: Основа для всех труб.
+			ConduitWrench: Манипулятор труб.
+		}
+		UI:
+		{
+			Input: Ввод
+			InputAllowed: Доступно для ввода.
+			InputDisallowed: Запрещено для ввода.
+			Output: Вывод
+			OutputAllowed: Доступно для вывода.
+			OutputDisallowed: Запрещено для вывода.
+		}
+	}
+}

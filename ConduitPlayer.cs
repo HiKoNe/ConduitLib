@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using ConduitLib.Contents.Items;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 

@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ConduitLib
+namespace ConduitLib.Contents.Items
 {
     public class ConduitWrench : ModItem
     {
@@ -15,13 +15,8 @@ namespace ConduitLib
         public static List<Type> ConduitMode { get; set; }
         public static EWrenchMode Mode { get; set; }
 
-        public override string Texture => "ConduitLib/Assets/Wrench";
-
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Conduit Wrench");
-            Tooltip.SetDefault("Conduit manipulator.");
-
             ConduitMode = new();
             foreach (var modConduit in ConduitLoader.Conduits)
                 ConduitMode.Add(modConduit.GetType());
@@ -36,6 +31,7 @@ namespace ConduitLib
             Item.tileBoost = 10;
 
             Item.rare = ItemRarityID.Blue;
+            Item.value = Item.buyPrice(0, 5, 0, 0);
             Item.useStyle = ItemUseStyleID.Swing;
 
             Item.useTurn = true;

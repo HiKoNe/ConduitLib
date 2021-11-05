@@ -1,0 +1,25 @@
+Mods:
+{
+	ConduitLib:
+	{
+		ItemName:
+		{
+			ConduitShell: Conduit Shell
+			ConduitWrench: Conduit Wrench
+		}
+		ItemTooltip:
+		{
+			ConduitShell: The foundation of the conduits.
+			ConduitWrench: Conduit manipulator.
+		}
+		UI:
+		{
+			Input: Input
+			InputAllowed: Allowed for insertion.
+			InputDisallowed: Disallowed for insertion.
+			Output: Output
+			OutputAllowed: Allowed  for extraction.
+			OutputDisallowed: Disallowed for extraction.
+		}
+	}
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ConduitLib.Contents.Items;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.UI;

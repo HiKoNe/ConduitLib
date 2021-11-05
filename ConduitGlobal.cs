@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ConduitLib.Contents.Items;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
@@ -8,7 +9,7 @@ using Terraria.ObjectData;
 
 namespace ConduitLib
 {
-    public class ConduitGlobal : GlobalTile
+    public class GlobalTiles : GlobalTile
     {
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
@@ -74,5 +75,19 @@ namespace ConduitLib
 
         //    return flag;
         //}
+    }
+
+    public class GlobalNPCs : GlobalNPC
+    {
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            base.SetupShop(type, shop, ref nextSlot);
+
+            if (type == NPCID.GoblinTinkerer)
+            {
+                shop.item[nextSlot++].SetDefaults(ModContent.ItemType<ConduitWrench>());
+                shop.item[nextSlot++].SetDefaults(ModContent.ItemType<ConduitShell>());
+            }
+        }
     }
 }

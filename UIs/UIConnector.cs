@@ -12,6 +12,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using Terraria.ID;
+using Terraria.Localization;
 
 namespace ConduitLib.UIs
 {
@@ -87,16 +88,16 @@ namespace ConduitLib.UIs
             verticalLine.Color = Color.Black;
             panel.Append(verticalLine);
 
-            var input = new UIToggle(ConduitAsset.Button[1], ConduitAsset.Button[2], Current.Input, "Input") { Outline = ConduitAsset.Button[0] };
-            input.Description = () => (Current.Input ? "Allowed" : "Disallowed") + " for insertion";
+            var input = new UIToggle(ConduitAsset.Button[1], ConduitAsset.Button[2], Current.Input, Language.GetTextValue("Mods.ConduitLib.UI.Input")) { Outline = ConduitAsset.Button[0] };
+            input.Description = () => Current.Input ? Language.GetTextValue("Mods.ConduitLib.UI.InputAllowed") : Language.GetTextValue("Mods.ConduitLib.UI.InputDisallowed");
             input.OnToggle = (toggle) => Current.Input = toggle;
             panel.Append(input);
 
             var rightDim = new StyleDimension(panel.PaddingLeft, 0.5f);
             var topDim = new StyleDimension(22 + panel.PaddingTop, 0);
-            var output = new UIToggle(ConduitAsset.Button[1], ConduitAsset.Button[2], Current.Output, "Output") { Outline = ConduitAsset.Button[0] };
+            var output = new UIToggle(ConduitAsset.Button[1], ConduitAsset.Button[2], Current.Output, Language.GetTextValue("Mods.ConduitLib.UI.Output")) { Outline = ConduitAsset.Button[0] };
             output.Left = rightDim;
-            output.Description = () => (Current.Output ? "Allowed" : "Disallowed") + " for extraction";
+            output.Description = () => Current.Output ? Language.GetTextValue("Mods.ConduitLib.UI.OutputAllowed") : Language.GetTextValue("Mods.ConduitLib.UI.OutputDisallowed");
             output.OnToggle = (toggle) => Current.Output = toggle;
             panel.Append(output);
 
