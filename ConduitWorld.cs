@@ -33,6 +33,10 @@ namespace ConduitLib
             ConduitsToCheck.Clear();
             ConduitsToUpdate.Clear();
         }
+        public override void PreWorldGen()
+        {
+            OnWorldLoad();
+        }
         public override void PostUpdateWorld()
         {
             foreach (var conduit in ConduitsToCheck)

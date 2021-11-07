@@ -62,19 +62,6 @@ namespace ConduitLib
                         foreach (var conduit in ConduitWorld.Conduits[x, y])
                             ConduitWorld.ConduitsToCheck.Add(conduit);
         }
-
-        //public override bool PreHitWire(int i, int j, int type)
-        //{
-        //    bool flag = base.PreHitWire(i, j, type);
-        //    if (Main.netMode == 1)
-        //        return flag;
-
-        //    if (ConduitUtil.TryGetConduit<ItemConduit>(i, j, out var conduit)
-        //        && conduit.WireMode && conduit.IsConnector && conduit.Output)
-        //        conduit.OnUpdate();
-
-        //    return flag;
-        //}
     }
 
     public class GlobalNPCs : GlobalNPC

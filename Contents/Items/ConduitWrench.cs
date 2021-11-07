@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -17,6 +18,7 @@ namespace ConduitLib.Contents.Items
 
         public override void SetStaticDefaults()
         {
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ConduitMode = new();
             foreach (var modConduit in ConduitLoader.Conduits)
                 ConduitMode.Add(modConduit.GetType());
@@ -39,6 +41,9 @@ namespace ConduitLib.Contents.Items
             Item.consumable = false;
             Item.noMelee = true;
         }
+
+        public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup) =>
+            itemGroup = ContentSamples.CreativeHelper.ItemGroup.EverythingElse;
 
         public override bool? UseItem(Player player)
         {
