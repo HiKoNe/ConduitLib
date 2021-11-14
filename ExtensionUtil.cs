@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.IO;
+using System.Linq;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace ConduitLib
@@ -32,10 +34,19 @@ namespace ConduitLib
             return new Rectangle((int)pos.X + x, (int)pos.Y + y, width, height);
         }
 
-        public static void Write(this BinaryWriter writer, Type type) =>
+        public static void Write(this BinaryWriter writer, Type type)
+        {
             writer.Write(type.FullName);
-        public static Type ReadType(this BinaryReader reader) =>
-            Type.GetType(reader.ReadString());
+            writer.Write(type.Assembly.FullName);
+        }
+
+        public static Type ReadType(this BinaryReader reader)
+        {
+            var type = reader.ReadString();
+            var ass = reader.ReadString();
+            var ConduitLibAss = AppDomain.CurrentDomain.GetAssemblies().Last(a => a.FullName == ass);
+            return ConduitLibAss.GetType(type);
+        }
 
         public static void Write(this BinaryWriter writer, TagCompound tag) =>
             TagIO.Write(tag, writer);

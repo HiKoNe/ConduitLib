@@ -53,7 +53,9 @@ namespace ConduitLib
                         var conduit = list.Find(c => c.GetType() == conduitType);
                         bool flag = conduit is null;
                         if (flag)
+                        {
                             conduit = (ModConduit)Activator.CreateInstance(conduitType);
+                        }
 
                         conduit.InternalLoadData(tag, false);
 
