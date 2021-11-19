@@ -102,7 +102,7 @@ namespace ConduitLib.Contents.Items
             }
             else if (Main.mouseRight && Main.mouseRightRelease)
             {
-                ConduitUI.UIWrench.Active = !ConduitUI.UIWrench.Active;
+                ConduitUI.UIWrench.Active ^= true;
                 return null;
             }
 

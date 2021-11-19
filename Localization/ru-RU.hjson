@@ -4,22 +4,36 @@ Mods:
 	{
 		ItemName:
 		{
-			ConduitShell: Оболочка трубы
-			ConduitWrench: Трубный ключ
+			ConduitWrench: "Трубный ключ"
+			ConduitProbe: "Трубный зонд"
+			ConduitShell: "Оболочка трубы"
+			EmptyConduitFilter: "Пустой фильтр для труб"
+			AdvancedEmptyConduitFilter: "Продвинутый пустой фильтр для труб"
 		}
 		ItemTooltip:
 		{
-			ConduitShell: Основа для всех труб.
-			ConduitWrench: Манипулятор труб.
+			ConduitWrench: "Манипулятор труб."
+			ConduitProbe: "Позволяет копировать настройки труб."
+			ConduitShell: "Основа для труб."
+			EmptyConduitFilter: "Основа для фильтров."
+			AdvancedEmptyConduitFilter: "Основа для продвинутых фильтров."
 		}
 		UI:
 		{
-			Input: Ввод
-			InputAllowed: Доступно для ввода.
-			InputDisallowed: Запрещено для ввода.
-			Output: Вывод
-			OutputAllowed: Доступно для вывода.
-			OutputDisallowed: Запрещено для вывода.
+			Input: "Ввод"
+			InputAllowed: "Доступно для ввода."
+			InputDisallowed: "Запрещено для ввода."
+			Output: "Вывод"
+			OutputAllowed: "Доступно для вывода."
+			OutputDisallowed: "Запрещено для вывода."
+			FilterSlot: "Слот для фильтра"
+			Whitelist: "Белый лист"
+			Blacklist: "Чёрный лист"
+			DataCopy: "Данные скопированы!"
+			DataPaste: "Данные вставлены!"
+			DataClear: "Данные очищены!"
+			DataStore: "Хранит данные для: {0}"
+			DataStoreEmpty: "Нет данных."
 		}
 	}
 }

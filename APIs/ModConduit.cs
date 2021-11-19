@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using Terraria.ID;
+using ItemConduits.ConduitLib.APIs;
 
 namespace ConduitLib.APIs
 {
@@ -30,7 +30,9 @@ namespace ConduitLib.APIs
         internal int updateDelay;
         protected List<ModConduit> network;
         protected bool input;
+        protected Item inputFilter = new();
         protected bool output = true;
+        protected Item outputFilter = new();
         protected bool isConnector;
         protected private Point16 position;
         protected bool[] direction;
@@ -82,7 +84,10 @@ namespace ConduitLib.APIs
         public bool[] Direction { get => direction; set => direction = value; } //Left, Up, Right, Down
         public bool Input { get => input; set { input = value; UpdateConduit(); } }
         public bool Output { get => output; set { output = value; UpdateConduit(); } }
+        public Item InputFilter { get => inputFilter; set { inputFilter = value; UpdateConduit(); } }
+        public Item OutputFilter { get => outputFilter; set { outputFilter = value; UpdateConduit(); } }
         public virtual int? UpdateDelay { get; }
+        public virtual bool UseFilters { get; }
         public abstract Asset<Texture2D> Texture { get; }
         public abstract Asset<Texture2D> WrenchIcon { get; }
 
@@ -93,36 +98,70 @@ namespace ConduitLib.APIs
             ConduitNet.SendPacket(PacketID.SyncConduit, -1, Position.X, Position.Y, GetType(), false);
         }
 
+        public IFilter GetFilter(bool input) => input ? (IFilter)InputFilter?.ModItem : (IFilter)OutputFilter?.ModItem;
+
         public abstract bool ValidForConnector();
         public virtual void OnPlace() { }
+        internal void Remove()
+        {
+            var inFilter = InputFilter?.ModItem;
+            if (inFilter is not null)
+            {
+                var i = Item.NewItem(Position.ToVector2() * 16, InputFilter.type, 1, false, 0, true);
+                var tag = new TagCompound();
+                inFilter.SaveData(tag);
+                Main.item[i].ModItem.LoadData(tag);
+            }
+            var outFilter = OutputFilter?.ModItem;
+            if (outFilter is not null)
+            {
+                var i = Item.NewItem(Position.ToVector2() * 16, OutputFilter.type, 1, false, 0, true);
+                var tag = new TagCompound();
+                outFilter.SaveData(tag);
+                Main.item[i].ModItem.LoadData(tag);
+            }
+
+            OnRemove();
+        }
         public virtual void OnRemove() { }
         public virtual void OnUpdate() { }
-        public virtual void OnInitializeUI(ref UIPanel panel, StyleDimension rightDim, StyleDimension topDim) { }
+        public virtual void OnInitializeUI(UIPanel panel, StyleDimension rightDim, ref StyleDimension topDim) { }
+        public virtual void OnInitializeUIFilters(int index, bool input, UIElement element) { }
         public virtual bool OnDraw(in SpriteBatch spriteBatch, ref int frameX, ref int frameY, ref float? alpha) => true;
-        public virtual void SaveData(TagCompound tag) { }
-        public virtual void LoadData(TagCompound tag) { }
+        public virtual void SaveData(TagCompound tag, bool probeCopy) { }
+        public virtual void LoadData(TagCompound tag, bool probePast) { }
 
-        public virtual void InternalSaveData(TagCompound tag)
+        public void InternalSaveData(TagCompound tag, bool probeCopy = false)
         {
-            tag["x"] = position.X;
-            tag["y"] = position.Y;
+            if (!probeCopy)
+            {
+                tag["x"] = position.X;
+                tag["y"] = position.Y;
+                tag["connector"] = isConnector;
+                tag["inFilter"] = ItemIO.Save(inputFilter);
+                tag["outFilter"] = ItemIO.Save(outputFilter);
+            }
             tag["dir0"] = direction[0];
             tag["dir1"] = direction[1];
             tag["dir2"] = direction[2];
             tag["dir3"] = direction[3];
             tag["input"] = input;
             tag["output"] = output;
-            tag["connector"] = isConnector;
-            SaveData(tag);
+            SaveData(tag, probeCopy);
         }
-        public virtual void InternalLoadData(TagCompound tag, bool needUpdate = true)
+        public void InternalLoadData(TagCompound tag, bool needUpdate = true, bool probePast = false)
         {
-            position = new Point16(tag.GetShort("x"), tag.GetShort("y"));
+            if (!probePast)
+            {
+                position = new Point16(tag.GetShort("x"), tag.GetShort("y"));
+                isConnector = tag.GetBool("connector");
+                inputFilter = ItemIO.Load(tag.GetCompound("inFilter"));
+                outputFilter = ItemIO.Load(tag.GetCompound("outFilter"));
+            }
             direction = new bool[] { tag.GetBool("dir0"), tag.GetBool("dir1"), tag.GetBool("dir2"), tag.GetBool("dir3") };
             input = tag.GetBool("input");
             output = tag.GetBool("output");
-            isConnector = tag.GetBool("connector");
-            LoadData(tag);
+            LoadData(tag, probePast);
             if (needUpdate)
                 IsConnector = isConnector;
         }

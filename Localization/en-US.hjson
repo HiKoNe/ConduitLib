@@ -4,22 +4,36 @@ Mods:
 	{
 		ItemName:
 		{
-			ConduitShell: Conduit Shell
-			ConduitWrench: Conduit Wrench
+			ConduitWrench: "Conduit Wrench"
+			ConduitProbe: "Conduit Probe"
+			ConduitShell: "Conduit Shell"
+			EmptyConduitFilter: "Empty Conduit Filter"
+			AdvancedEmptyConduitFilter: "Advanced Empty Conduit Filter"
 		}
 		ItemTooltip:
 		{
-			ConduitShell: The foundation of the conduits.
-			ConduitWrench: Conduit manipulator.
+			ConduitWrench: "Conduit manipulator."
+			ConduitProbe: "Allows to copy conduit settings."
+			ConduitShell: "The foundation of the conduits."
+			EmptyConduitFilter: "The foundation of the filters."
+			AdvancedEmptyConduitFilter: "The foundation of the advanced  filters."
 		}
 		UI:
 		{
-			Input: Input
-			InputAllowed: Allowed for insertion.
-			InputDisallowed: Disallowed for insertion.
-			Output: Output
-			OutputAllowed: Allowed  for extraction.
-			OutputDisallowed: Disallowed for extraction.
+			Input: "Input"
+			InputAllowed: "Allowed for insertion."
+			InputDisallowed: "Disallowed for insertion."
+			Output: "Output"
+			OutputAllowed: "Allowed  for extraction."
+			OutputDisallowed: "Disallowed for extraction."
+			FilterSlot: "Filter Slot"
+			Whitelist: "Whitelist"
+			Blacklist: "Blacklist"
+			DataCopy: "Data Copied!"
+			DataPaste: "Data Pasted!"
+			DataClear: "Data Cleared!"
+			DataStore: "Stores data for: {0}"
+			DataStoreEmpty: "No data stored."
 		}
 	}
 }

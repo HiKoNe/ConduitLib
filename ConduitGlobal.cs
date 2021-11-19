@@ -74,6 +74,13 @@ namespace ConduitLib
             {
                 shop.item[nextSlot++].SetDefaults(ModContent.ItemType<ConduitWrench>());
                 shop.item[nextSlot++].SetDefaults(ModContent.ItemType<ConduitShell>());
+                shop.item[nextSlot++].SetDefaults(ModContent.ItemType<EmptyConduitFilter>());
+            }
+
+            if (type == NPCID.Mechanic)
+            {
+                shop.item[nextSlot++].SetDefaults(ModContent.ItemType<ConduitProbe>());
+                shop.item[nextSlot++].SetDefaults(ModContent.ItemType<AdvancedEmptyConduitFilter>());
             }
         }
     }

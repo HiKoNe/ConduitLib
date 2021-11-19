@@ -11,6 +11,7 @@ namespace ConduitLib
         static readonly BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.SetProperty;
         
         public static Asset<Texture2D>[] Wrench { get; set; }
+        public static Asset<Texture2D>[] Probe { get; set; }
         public static Asset<Texture2D>[] WrenchGUI { get; set; }
         public static Asset<Texture2D>[] Button { get; set; }
         public static Asset<Texture2D>[] ButtonMini { get; set; }
@@ -33,6 +34,7 @@ namespace ConduitLib
         internal static void Unload()
         {
             Wrench = null;
+            Probe = null;
             WrenchGUI = null;
             Button = null;
             ButtonMini = null;

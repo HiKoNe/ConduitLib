@@ -1,3 +1,4 @@
 Allow you create Conduits/Pipes/Wires/etc.
 
-*All Issues in Discord
+All Issues in Discord*
+All Changelogs in Site*

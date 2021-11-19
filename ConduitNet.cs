@@ -1,5 +1,6 @@
 ﻿using ConduitLib.APIs;
 using System;
+using System.Diagnostics;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
@@ -70,7 +71,7 @@ namespace ConduitLib
                         {
                             if (c.GetType() == conduitType)
                             {
-                                c.OnRemove();
+                                c.Remove();
                                 return true;
                             }
                             return false;

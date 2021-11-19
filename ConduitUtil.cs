@@ -65,7 +65,7 @@ namespace ConduitLib
                 if (c.GetType() == conduitType)
                 {
                     c.IsConnector = false;
-                    c.OnRemove();
+                    c.Remove();
                     return true;
                 }
                 return false;
